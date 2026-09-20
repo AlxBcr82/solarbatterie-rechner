@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="color-scheme" content="light dark">
-  <meta name="theme-color" content="#0daec0">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0daec0">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#152723">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -34,6 +35,18 @@
       --warning: #875c00;
       --warning-bg: #fff4d6;
       --shadow: 0 8px 28px rgba(16, 55, 37, .09);
+      --hero-text: #102026;
+      --hero-muted: #567078;
+      --hero-bg:
+        radial-gradient(circle at 82% 10%, rgba(255,255,255,.96), rgba(255,255,255,0) 34%),
+        linear-gradient(155deg, #d9f6fa 0%, #edfafd 58%, #f8fbfc 100%);
+      --hero-orb: rgba(45,194,210,.08);
+      --hero-tile: rgba(255,255,255,.86);
+      --hero-icon: #183238;
+      --hero-storage: #ffffff;
+      --hero-flow: #4d656c;
+      --hero-tile-shadow: 0 9px 22px rgba(20,79,88,.08);
+      --hero-storage-shadow: 0 12px 28px rgba(13,174,192,.17);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -48,6 +61,18 @@
         --warning: #ffd875;
         --warning-bg: #3d3218;
         --shadow: none;
+        --hero-text: #eefbfc;
+        --hero-muted: #a8c2c7;
+        --hero-bg:
+          radial-gradient(circle at 82% 10%, rgba(90,219,232,.14), rgba(90,219,232,0) 35%),
+          linear-gradient(155deg, #183038 0%, #152723 58%, #111b18 100%);
+        --hero-orb: rgba(90,219,232,.07);
+        --hero-tile: rgba(25,45,45,.88);
+        --hero-icon: #e7f7f5;
+        --hero-storage: #1c3537;
+        --hero-flow: #b5ccca;
+        --hero-tile-shadow: 0 9px 22px rgba(0,0,0,.20);
+        --hero-storage-shadow: 0 12px 28px rgba(0,0,0,.26);
       }
     }
 
@@ -180,21 +205,19 @@
       min-height: 244px;
       padding: 22px 20px 30px;
       overflow: hidden;
-      color: #102026;
-      background:
-        radial-gradient(circle at 82% 10%, rgba(255,255,255,.96), rgba(255,255,255,0) 34%),
-        linear-gradient(155deg, #d9f6fa 0%, #edfafd 58%, #f8fbfc 100%);
+      color: var(--hero-text);
+      background: var(--hero-bg);
     }
-    .app-hero::after { content: ""; position: absolute; right: -58px; bottom: -94px; width: 220px; height: 220px; border-radius: 50%; background: rgba(45,194,210,.08); }
+    .app-hero::after { content: ""; position: absolute; right: -58px; bottom: -94px; width: 220px; height: 220px; border-radius: 50%; background: var(--hero-orb); }
     .hero-top { position: relative; z-index: 1; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
     .hero-title { display: block; font-size: 1.34rem; font-weight: 760; letter-spacing: -.02em; }
-    .hero-subtitle { display: block; margin-top: 2px; color: #567078; font-size: .86rem; }
-    .brand-mark { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 14px; background: rgba(255,255,255,.86); color: #0daec0; box-shadow: 0 8px 22px rgba(14,148,161,.12); }
+    .hero-subtitle { display: block; margin-top: 2px; color: var(--hero-muted); font-size: .86rem; }
+    .brand-mark { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 14px; background: var(--hero-tile); color: var(--accent); box-shadow: var(--hero-tile-shadow); }
     .brand-mark svg { width: 23px; height: 23px; }
     .energy-flow { position: relative; z-index: 1; display: grid; grid-template-columns: 62px 1fr 76px 1fr 62px; align-items: center; margin: 32px 2px 0; }
-    .flow-node { display: grid; justify-items: center; gap: 8px; color: #4d656c; font-size: .72rem; text-align: center; }
-    .flow-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 16px; background: rgba(255,255,255,.86); color: #183238; box-shadow: 0 9px 22px rgba(20,79,88,.08); font-size: .82rem; font-weight: 800; }
-    .flow-node.storage .flow-icon { width: 56px; height: 56px; border-radius: 19px; background: #ffffff; color: #0daec0; box-shadow: 0 12px 28px rgba(13,174,192,.17); }
+    .flow-node { display: grid; justify-items: center; gap: 8px; color: var(--hero-flow); font-size: .72rem; text-align: center; }
+    .flow-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 16px; background: var(--hero-tile); color: var(--hero-icon); box-shadow: var(--hero-tile-shadow); font-size: .82rem; font-weight: 800; }
+    .flow-node.storage .flow-icon { width: 56px; height: 56px; border-radius: 19px; background: var(--hero-storage); color: var(--accent); box-shadow: var(--hero-storage-shadow); }
     .flow-node.storage .flow-icon svg { width: 28px; height: 28px; }
     .flow-link { position: relative; height: 2px; background: linear-gradient(90deg, #f1bd36, #14bfd0); }
     .flow-link::after { content: ""; position: absolute; right: -1px; top: -3px; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #14bfd0; }
