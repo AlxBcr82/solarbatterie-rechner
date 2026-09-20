@@ -5,7 +5,7 @@
 <h1 align="center">Solarbank AC-Laderechner</h1>
 
 <p align="center">
-  Ein kompakter, mobil optimierter Wirtschaftlichkeitsrechner für die AC-Aufladung der Anker SOLIX Solarbank 3 E2700 Pro.
+  Ein kompakter, mobil optimierter Wirtschaftlichkeitsrechner für die AC-Aufladung der Anker SOLIX Solarbank 3 E2700 Pro und Solarbank 4 E5000 Pro.
 </p>
 
 <p align="center">
@@ -28,6 +28,8 @@ Der Ladepreis wird mit einem Schieberegler eingestellt. Das Ergebnis aktualisier
 - Direkte Berechnung ohne Registrierung oder Server
 - Deutsche Dezimalkommas werden unterstützt
 - Drei Rechenprofile für unterschiedliche Betrachtungsweisen
+- Geräteprofile für Solarbank 3 E2700 Pro und Solarbank 4 E5000 Pro
+- Speicherkonfiguration mit BP2700 oder BP5000
 - Frei anpassbarer Gesamtwirkungsgrad
 - Optionale Berücksichtigung von Batterieverschleiß und gewünschtem Kostenvorteil
 - Jahreshochrechnung für Netzbezug, nutzbare Energie und Ersparnis
@@ -37,10 +39,11 @@ Der Ladepreis wird mit einem Schieberegler eingestellt. Das Ergebnis aktualisier
 
 ## Bedienung
 
-1. Den vollständigen Endkundenpreis einer günstigen Stunde aus der Tarif-App ablesen.
-2. Diesen Wert mit dem Schieberegler als **AC-Ladepreis** einstellen.
-3. Das gewünschte Rechenprofil auswählen.
-4. Den angezeigten Mindestpreis mit einem späteren Strompreis vergleichen.
+1. Bei Bedarf einmalig Solarbank und Erweiterungsakkus unter **Speicher konfigurieren** auswählen.
+2. Den vollständigen Endkundenpreis einer günstigen Stunde aus der Tarif-App ablesen.
+3. Diesen Wert mit dem Schieberegler als **AC-Ladepreis** einstellen.
+4. Das gewünschte Rechenprofil auswählen.
+5. Den angezeigten Mindestpreis mit einem späteren Strompreis vergleichen.
 
 Ist der spätere vollständige Endkundenpreis mindestens so hoch wie das Ergebnis, ist das Laden nach dem gewählten Profil wirtschaftlich.
 
@@ -77,6 +80,17 @@ Steckdose → Ladeelektronik → Akku → Wechselrichter → Hausnetz
 
 Die Werte können im erweiterten Bereich individuell geändert werden.
 
+### Unterstützte Speicherkonfigurationen
+
+| Gerät oder Akku | Nennkapazität |
+|---|---:|
+| Solarbank 3 E2700 Pro | 2,688 kWh |
+| Solarbank 4 E5000 Pro | 5,024 kWh |
+| BP2700 | 2,688 kWh |
+| BP5000 | 5,024 kWh |
+
+BP2700 und BP5000 können für beide Solarbank-Modelle ausgewählt werden. Die App berücksichtigt bis zu fünf Erweiterungsakkus eines Typs. Die ermittelte Nennkapazität dient als Ausgangswert für die Jahreshochrechnung; ein tatsächlich am Stromzähler gemessener Netzbezug kann dort weiterhin von Hand eingetragen werden.
+
 ## Welche Strompreise gehören in den Rechner?
 
 Verwendet werden sollten vollständige variable Endkundenpreise. Dazu zählen insbesondere:
@@ -100,7 +114,7 @@ Die App erscheint anschließend mit eigenem Icon auf dem Home-Bildschirm und öf
 
 ## Datenschutz
 
-Die Anwendung besteht ausschließlich aus statischem HTML, CSS und JavaScript. Sämtliche Eingaben und Berechnungen verbleiben im Browser; es gibt keine eigenen Cookies, Formulare, Analyse- oder Trackingdienste. Beim Abruf über GitHub Pages verarbeitet der Hostinganbieter technisch erforderliche Verbindungsdaten. Einzelheiten stehen in den [Datenschutzhinweisen](https://alxbcr82.github.io/solarbatterie-rechner/datenschutz.html).
+Die Anwendung besteht ausschließlich aus statischem HTML, CSS und JavaScript. Sämtliche Eingaben und Berechnungen verbleiben im Browser. Nur die gewählte Solarbank- und Akkukonfiguration wird dort lokal für den nächsten Aufruf gespeichert. Es gibt keine eigenen Cookies, Formulare, Analyse- oder Trackingdienste. Beim Abruf über GitHub Pages verarbeitet der Hostinganbieter technisch erforderliche Verbindungsdaten. Einzelheiten stehen in den [Datenschutzhinweisen](https://alxbcr82.github.io/solarbatterie-rechner/datenschutz.html).
 
 ## Technische Umsetzung
 

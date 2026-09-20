@@ -13,7 +13,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
-  <meta name="description" content="Ein einfacher Rechner für die AC-Aufladung der Anker SOLIX Solarbank 3 Pro: Ladepreis einstellen und sofort sehen, ab welchem späteren Strompreis sich das Speichern lohnt.">
+  <meta name="description" content="Ein einfacher Rechner für die AC-Aufladung der Anker SOLIX Solarbank 3 und 4: Ladepreis einstellen und sofort sehen, ab welchem späteren Strompreis sich das Speichern lohnt.">
   <meta property="og:title" content="Solarbank AC-Laderechner">
   <meta property="og:description" content="Ladepreis einstellen und sofort erkennen, ob sich das Zwischenspeichern von Netzstrom wirtschaftlich lohnt.">
   <meta property="og:type" content="website">
@@ -75,7 +75,7 @@
     .hint { margin: 6px 0 0; color: var(--muted); font-size: .86rem; }
 
     .number-wrap { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
-    input[type="text"] {
+    input[type="text"], select {
       width: 5.8rem;
       min-height: 44px;
       padding: 8px 10px;
@@ -87,7 +87,8 @@
       font-variant-numeric: tabular-nums;
       text-align: right;
     }
-    input[type="text"]:focus-visible, summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 2px; }
+    select { width: 100%; text-align: left; }
+    input[type="text"]:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 2px; }
 
     input[type="range"] {
       width: 100%;
@@ -120,6 +121,17 @@
       font-weight: 650;
     }
     .profile.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+    .device-config { margin: 0 0 13px; padding: 0 14px; border: 1px solid var(--line); border-radius: 15px; background: var(--card); }
+    .device-config > summary { display: flex; min-height: 52px; align-items: center; justify-content: space-between; gap: 12px; }
+    .device-config > summary::marker { color: var(--accent); }
+    .config-summary { color: var(--muted); font-size: .82rem; font-weight: 600; text-align: right; }
+    .config-content { padding: 3px 1px 15px; }
+    .config-field + .config-field { margin-top: 13px; }
+    .config-field label { display: block; margin-bottom: 6px; font-size: .88rem; }
+    .config-capacity { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 13px; padding: 11px 12px; border-radius: 12px; background: var(--accent-soft); }
+    .config-capacity span { color: var(--muted); font-size: .82rem; }
+    .config-capacity strong { color: var(--accent); font-variant-numeric: tabular-nums; }
 
     details { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
     summary { min-height: 44px; cursor: pointer; color: var(--accent); font-weight: 650; }
@@ -280,6 +292,44 @@
         <button class="profile" type="button" data-profile="energy">Nur Energie</button>
       </div>
 
+      <details class="device-config">
+        <summary>
+          <span>Speicher konfigurieren</span>
+          <strong class="config-summary" id="config-summary">Solarbank 3 · 2,688 kWh</strong>
+        </summary>
+        <div class="config-content">
+          <div class="config-field">
+            <label for="device-model">Solarbank</label>
+            <select id="device-model">
+              <option value="sb3">Solarbank 3 E2700 Pro</option>
+              <option value="sb4">Solarbank 4 E5000 Pro</option>
+            </select>
+          </div>
+          <div class="config-field">
+            <label for="extension-configuration">Erweiterungsakkus</label>
+            <select id="extension-configuration">
+              <option value="none">Keine</option>
+              <option value="bp2700-1">1 × BP2700</option>
+              <option value="bp2700-2">2 × BP2700</option>
+              <option value="bp2700-3">3 × BP2700</option>
+              <option value="bp2700-4">4 × BP2700</option>
+              <option value="bp2700-5">5 × BP2700</option>
+              <option value="bp5000-1">1 × BP5000</option>
+              <option value="bp5000-2">2 × BP5000</option>
+              <option value="bp5000-3">3 × BP5000</option>
+              <option value="bp5000-4">4 × BP5000</option>
+              <option value="bp5000-5">5 × BP5000</option>
+            </select>
+            <p class="hint">BP2700 und BP5000 sind mit Solarbank 3 und 4 kompatibel.</p>
+          </div>
+          <div class="config-capacity" aria-live="polite">
+            <span>Nennkapazität gesamt</span>
+            <strong id="storage-capacity">2,688 kWh</strong>
+          </div>
+          <p class="hint">Die Konfiguration setzt die Lademenge der Jahreshochrechnung vor. Der wirtschaftliche Mindestpreis bleibt davon unabhängig.</p>
+        </div>
+      </details>
+
       <div class="field primary-input">
         <div class="field-head">
           <label for="charge-price">AC-Ladepreis</label>
@@ -339,7 +389,7 @@
               <label for="capacity">Netzbezug je Ladezyklus</label>
               <div class="number-wrap"><input id="capacity" type="text" value="2,7" inputmode="decimal" autocomplete="off"><span>kWh</span></div>
             </div>
-            <p class="hint">Am besten den tatsächlichen Wert am Stromzähler verwenden, nicht die nominelle Akkukapazität.</p>
+            <p class="hint">Wird aus der Speicherkonfiguration vorbelegt. Für eine genauere Hochrechnung am besten den tatsächlichen Wert am Stromzähler eintragen.</p>
           </div>
 
           <div class="field">
@@ -419,6 +469,14 @@
       var formulaText = document.getElementById("formula-text");
       var errorOutput = document.getElementById("error");
       var profileButtons = document.querySelectorAll(".profile");
+      var deviceSelect = document.getElementById("device-model");
+      var extensionSelect = document.getElementById("extension-configuration");
+      var configSummary = document.getElementById("config-summary");
+      var storageCapacityOutput = document.getElementById("storage-capacity");
+      var deviceModels = {
+        sb3: { shortLabel: "Solarbank 3", capacity: 2.688 },
+        sb4: { shortLabel: "Solarbank 4", capacity: 5.024 }
+      };
       var profiles = {
         practice: { efficiency: 79, degradation: 2, margin: 1 },
         safe: { efficiency: 75, degradation: 3, margin: 2 },
@@ -441,6 +499,45 @@
       }
 
       function read(id) { return parseGerman(fields[id].value); }
+
+      function saveConfiguration() {
+        try {
+          localStorage.setItem("solarbank-configuration", JSON.stringify({
+            device: deviceSelect.value,
+            extension: extensionSelect.value
+          }));
+        } catch (ignore) {}
+      }
+
+      function applyConfiguration(setChargeAmount) {
+        var device = deviceModels[deviceSelect.value] || deviceModels.sb3;
+        var parts = extensionSelect.value.split("-");
+        var extensionCapacity = parts[0] === "bp2700" ? 2.688 : (parts[0] === "bp5000" ? 5.024 : 0);
+        var extensionCount = extensionCapacity ? Number(parts[1]) : 0;
+        var totalCapacity = device.capacity + extensionCount * extensionCapacity;
+        configSummary.textContent = device.shortLabel + " · " + format(totalCapacity, 3) + " kWh";
+        storageCapacityOutput.textContent = format(totalCapacity, 3) + " kWh";
+        if (setChargeAmount) fields.capacity.value = format(totalCapacity, 3);
+        saveConfiguration();
+        update();
+      }
+
+      function restoreConfiguration() {
+        try {
+          var stored = JSON.parse(localStorage.getItem("solarbank-configuration"));
+          if (!stored || !deviceModels[stored.device]) return false;
+          var extensionExists = false;
+          for (var e = 0; e < extensionSelect.options.length; e += 1) {
+            if (extensionSelect.options[e].value === stored.extension) extensionExists = true;
+          }
+          if (!extensionExists) return false;
+          deviceSelect.value = stored.device;
+          extensionSelect.value = stored.extension;
+          return true;
+        } catch (ignore) {
+          return false;
+        }
+      }
 
       function update() {
         var charge = read("charge-price");
@@ -508,7 +605,10 @@
         fields[ids[i]].addEventListener("input", update, false);
         fields[ids[i]].addEventListener("change", update, false);
       }
-      update();
+      deviceSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
+      extensionSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
+      restoreConfiguration();
+      applyConfiguration(true);
     }());
   </script>
 </body>
