@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0b6b45">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Solarbank">
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="apple-touch-icon.png">
+  <meta name="description" content="Ein einfacher Rechner für die AC-Aufladung der Anker SOLIX Solarbank 3 Pro: Ladepreis einstellen und sofort sehen, ab welchem späteren Strompreis sich das Speichern lohnt.">
+  <meta property="og:title" content="Solarbank AC-Laderechner">
+  <meta property="og:description" content="Ladepreis einstellen und sofort erkennen, ob sich das Zwischenspeichern von Netzstrom wirtschaftlich lohnt.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alxbcr82.github.io/solarbatterie-rechner/">
+  <meta property="og:image" content="https://alxbcr82.github.io/solarbatterie-rechner/apple-touch-icon.png">
+  <meta name="twitter:card" content="summary">
+  <title>Solarbank – AC-Laderechner</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f3f7f5;
+      --card: #ffffff;
+      --text: #14211b;
+      --muted: #617068;
+      --line: #d8e3dd;
+      --accent: #08764b;
+      --accent-soft: #e5f5ed;
+      --warning: #875c00;
+      --warning-bg: #fff4d6;
+      --shadow: 0 8px 28px rgba(16, 55, 37, .09);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f1713;
+        --card: #17221c;
+        --text: #eef8f2;
+        --muted: #a7b7ae;
+        --line: #304038;
+        --accent: #63d59c;
+        --accent-soft: #193b2b;
+        --warning: #ffd875;
+        --warning-bg: #3d3218;
+        --shadow: none;
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(28px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    main { width: min(100%, 680px); margin: 0 auto; }
+    h1 { margin: 0 0 6px; font-size: clamp(1.55rem, 6vw, 2.1rem); line-height: 1.15; }
+    .intro { margin: 0 0 20px; color: var(--muted); }
+    .card { padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+
+    .field { margin-bottom: 22px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; margin-bottom: 8px; }
+    label, .label { font-weight: 650; }
+    .hint { margin: 6px 0 0; color: var(--muted); font-size: .86rem; }
+
+    .number-wrap { display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+    input[type="text"] {
+      width: 5.8rem;
+      min-height: 44px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--bg);
+      color: var(--text);
+      font: inherit;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    input[type="text"]:focus-visible, summary:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 2px; }
+
+    input[type="range"] {
+      width: 100%;
+      height: 38px;
+      margin: 0;
+      accent-color: var(--accent);
+      touch-action: pan-y;
+    }
+
+    .result {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 18px;
+      background: var(--accent-soft);
+      text-align: center;
+    }
+    .result-label { color: var(--muted); font-size: .95rem; }
+    output { display: block; margin: 3px 0; color: var(--accent); font-size: clamp(2rem, 11vw, 3.4rem); font-weight: 760; line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .formula { margin: 9px 0 0; color: var(--muted); font-size: .86rem; }
+    .profiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; margin: 0 0 20px; }
+    .profile {
+      min-height: 42px;
+      padding: 7px 5px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      font-size: .8rem;
+      font-weight: 650;
+    }
+    .profile.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+    details { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+    summary { min-height: 44px; cursor: pointer; color: var(--accent); font-weight: 650; }
+    .advanced { padding-top: 12px; }
+
+    .annual { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .metric { padding: 13px; border: 1px solid var(--line); border-radius: 12px; }
+    .metric span { display: block; color: var(--muted); font-size: .78rem; }
+    .metric strong { display: block; margin-top: 3px; font-size: 1.08rem; font-variant-numeric: tabular-nums; }
+
+    .notice { margin-top: 16px; padding: 13px 14px; border-radius: 12px; color: var(--warning); background: var(--warning-bg); font-size: .88rem; }
+    .guide { margin-top: 16px; padding: 20px; border: 1px solid var(--line); border-radius: 18px; background: var(--card); box-shadow: var(--shadow); }
+    .guide h2 { margin: 0 0 8px; font-size: 1.2rem; }
+    .guide-intro { margin: 0; color: var(--muted); }
+    .steps { display: grid; gap: 13px; margin: 18px 0; padding: 0; list-style: none; counter-reset: steps; }
+    .steps li { position: relative; min-height: 36px; padding-left: 46px; counter-increment: steps; }
+    .steps li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .steps strong { display: block; margin-bottom: 2px; }
+    .steps span { color: var(--muted); font-size: .9rem; }
+    .example { margin: 16px 0 0; padding: 13px 14px; border-left: 4px solid var(--accent); border-radius: 9px; background: var(--accent-soft); font-size: .9rem; }
+    .profile-help { margin-top: 16px; padding-top: 2px; border-top: 1px solid var(--line); }
+    .profile-help summary { display: list-item; padding-top: 13px; }
+    .profile-help ul { margin: 6px 0 0; padding-left: 21px; color: var(--muted); font-size: .88rem; }
+    .profile-help li + li { margin-top: 6px; }
+    .error { min-height: 1.3em; margin: 12px 0 0; color: #c23737; font-size: .88rem; text-align: center; }
+    footer { margin: 18px 3px 0; color: var(--muted); font-size: .78rem; }
+    footer p { margin: 0 0 8px; }
+    footer a { color: var(--accent); }
+
+    @media (max-width: 430px) {
+      .card { padding: 17px; }
+      .field-head { align-items: center; }
+      .annual { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>AC-Laderechner</h1>
+    <p class="intro">Anker SOLIX Solarbank 3 E2700 Pro</p>
+
+    <section class="card" aria-labelledby="calculator-title">
+      <h2 id="calculator-title" hidden>Eingaben</h2>
+
+      <div class="profiles" aria-label="Rechenprofil">
+        <button class="profile active" type="button" data-profile="practice">Praxis</button>
+        <button class="profile" type="button" data-profile="safe">Konservativ</button>
+        <button class="profile" type="button" data-profile="energy">Nur Energie</button>
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="charge-price">AC-Ladepreis</label>
+          <div class="number-wrap">
+            <input id="charge-price" type="text" value="20,0" inputmode="decimal" autocomplete="off" aria-describedby="charge-hint">
+            <span>ct/kWh</span>
+          </div>
+        </div>
+        <input id="charge-slider" type="range" min="0" max="80" value="20" step="0.5" aria-label="AC-Ladepreis als Schieberegler">
+        <p class="hint" id="charge-hint">Kompletter Preis je aus dem Netz geladener kWh, einschließlich variabler Abgaben.</p>
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="efficiency">AC-Gesamtwirkungsgrad</label>
+          <div class="number-wrap">
+            <input id="efficiency" type="text" value="79,0" inputmode="decimal" autocomplete="off">
+            <span>%</span>
+          </div>
+        </div>
+        <p class="hint">Vom AC-Netz über den Speicher zurück zum AC-Hausnetz. Am besten mit eigenen Messwerten bestimmen.</p>
+      </div>
+
+      <div class="result" aria-live="polite">
+        <div class="result-label">Laden lohnt sich ab einem späteren Strompreis von</div>
+        <output id="break-even" for="charge-price efficiency degradation margin">28,32 ct/kWh</output>
+        <p class="formula" id="formula-text">inklusive 2 ct Verschleiß und 1 ct Sicherheitsvorteil</p>
+      </div>
+
+      <details>
+        <summary>Verschleiß, Gewinnziel und Jahreswert</summary>
+        <div class="advanced">
+          <div class="field">
+            <div class="field-head">
+              <label for="degradation">Batterieverschleiß</label>
+              <div class="number-wrap"><input id="degradation" type="text" value="2,0" inputmode="decimal" autocomplete="off"><span>ct/kWh</span></div>
+            </div>
+            <p class="hint">Optionaler Wert je aus dem Speicher abgegebener kWh. Bei einer ohnehin vorhandenen Batterie kann 0 sinnvoll sein.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="margin">Gewünschter Vorteil</label>
+              <div class="number-wrap"><input id="margin" type="text" value="1,0" inputmode="decimal" autocomplete="off"><span>ct/kWh</span></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="capacity">Netzbezug je Ladezyklus</label>
+              <div class="number-wrap"><input id="capacity" type="text" value="2,7" inputmode="decimal" autocomplete="off"><span>kWh</span></div>
+            </div>
+            <p class="hint">Am besten den tatsächlichen Wert am Stromzähler verwenden, nicht die nominelle Akkukapazität.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="cycles">AC-Ladezyklen pro Jahr</label>
+              <div class="number-wrap"><input id="cycles" type="text" value="100" inputmode="numeric" autocomplete="off"><span>Zyklen</span></div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <label for="later-price">Später vermiedener Strompreis</label>
+              <div class="number-wrap"><input id="later-price" type="text" value="35,0" inputmode="decimal" autocomplete="off"><span>ct/kWh</span></div>
+            </div>
+          </div>
+
+          <div class="annual" aria-live="polite">
+            <div class="metric"><span>Netzeinkauf pro Jahr</span><strong id="annual-input">270 kWh</strong></div>
+            <div class="metric"><span>Nutzbare Abgabe pro Jahr</span><strong id="annual-output">213 kWh</strong></div>
+            <div class="metric"><span>Jährlicher Kostenvorteil</span><strong id="annual-saving">20,66 €</strong></div>
+            <div class="metric"><span>Vorteil je Zyklus</span><strong id="cycle-saving">0,21 €</strong></div>
+          </div>
+        </div>
+      </details>
+
+      <p class="error" id="error" role="alert"></p>
+    </section>
+
+    <section class="guide" aria-labelledby="guide-title">
+      <h2 id="guide-title">Was macht dieser Rechner?</h2>
+      <p class="guide-intro">Er hilft dir zu entscheiden, ob sich das Laden der Solarbank mit günstigem Netzstrom lohnt. Dabei werden Umwandlungsverluste und – je nach Profil – auch Batterieverschleiß und eine kleine Sicherheitsreserve berücksichtigt.</p>
+
+      <ol class="steps">
+        <li><strong>Ladepreis einstellen</strong><span>Schiebe den Regler auf den vollständigen Strompreis einer günstigen Stunde aus deiner Tarif-App.</span></li>
+        <li><strong>Rechenprofil wählen</strong><span>„Praxis“ ist die empfohlene Alltagseinstellung. Die anderen Profile zeigen eine vorsichtigere oder rein energetische Betrachtung.</span></li>
+        <li><strong>Mit dem späteren Preis vergleichen</strong><span>Ist dein späterer Endkundenpreis mindestens so hoch wie das große grüne Ergebnis, ist das Laden nach dem gewählten Profil sinnvoll.</span></li>
+      </ol>
+
+      <p class="example"><strong>Beispiel:</strong> Bei 20 ct/kWh Ladepreis zeigt das Praxisprofil 28,32 ct/kWh. Kostet der Strom später 32 ct/kWh, lohnt sich das Laden. Bei 27 ct/kWh nicht.</p>
+
+      <details class="profile-help">
+        <summary>Was bedeuten die drei Profile?</summary>
+        <ul>
+          <li><strong>Praxis:</strong> realistische 79 % Gesamtwirkungsgrad plus kleiner Ansatz für Verschleiß und Unsicherheit.</li>
+          <li><strong>Konservativ:</strong> für lange Speicherzeiten oder überwiegend niedrige Entladeleistung.</li>
+          <li><strong>Nur Energie:</strong> berücksichtigt ausschließlich die gemessenen Energieverluste, ohne Verschleißaufschlag.</li>
+        </ul>
+      </details>
+    </section>
+
+    <aside class="notice">
+      <strong>So entsteht der Tagesplan:</strong> Stelle den Preis einer günstigen Stunde aus deiner Tarif-App ein. Liegt ein späterer vollständiger Endkundenpreis mindestens auf Höhe des angezeigten Werts, ist das Laden nach dem gewählten Profil wirtschaftlich. Monatliche Grundgebühren bleiben außen vor.
+    </aside>
+
+    <footer>
+      <p><strong>Wichtiger Hinweis:</strong> Die Ergebnisse sind unverbindliche Näherungswerte. Es wird keine Gewähr für Richtigkeit, Vollständigkeit oder Aktualität übernommen. Das Tool ersetzt keine Energie-, Finanz- oder Anlageberatung; Nutzung und daraus abgeleitete Entscheidungen erfolgen in eigener Verantwortung.</p>
+      <p>Eingaben und Berechnungen bleiben im Browser. Beim Aufruf verarbeitet GitHub Pages technisch erforderliche Verbindungsdaten. <a href="datenschutz.html">Datenschutzhinweise</a> · <a href="https://github.com/AlxBcr82/solarbatterie-rechner">Quellcode und MIT-Lizenz</a></p>
+      <p>Fixe Grundgebühren gehören nur dann in den Ladepreis, wenn sie durch das Laden zusätzlich entstehen. Privates, unabhängiges Hilfsmittel; keine offizielle Anker-Anwendung.</p>
+    </footer>
+  </main>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var ids = ["charge-price", "efficiency", "degradation", "margin", "capacity", "cycles", "later-price"];
+      var fields = {};
+      var i;
+      for (i = 0; i < ids.length; i += 1) fields[ids[i]] = document.getElementById(ids[i]);
+
+      var slider = document.getElementById("charge-slider");
+      var breakEvenOutput = document.getElementById("break-even");
+      var formulaText = document.getElementById("formula-text");
+      var errorOutput = document.getElementById("error");
+      var profileButtons = document.querySelectorAll(".profile");
+      var profiles = {
+        practice: { efficiency: 79, degradation: 2, margin: 1 },
+        safe: { efficiency: 75, degradation: 3, margin: 2 },
+        energy: { efficiency: 79, degradation: 0, margin: 0 }
+      };
+
+      function parseGerman(value) {
+        var cleaned = String(value).trim().replace(/\s/g, "").replace(",", ".");
+        return cleaned === "" ? NaN : Number(cleaned);
+      }
+
+      function format(value, digits) {
+        if (window.Intl && Intl.NumberFormat) {
+          return new Intl.NumberFormat("de-DE", {
+            minimumFractionDigits: digits,
+            maximumFractionDigits: digits
+          }).format(value);
+        }
+        return value.toFixed(digits).replace(".", ",");
+      }
+
+      function read(id) { return parseGerman(fields[id].value); }
+
+      function update() {
+        var charge = read("charge-price");
+        var efficiencyPercent = read("efficiency");
+        var degradation = read("degradation");
+        var margin = read("margin");
+        var capacity = read("capacity");
+        var cycles = read("cycles");
+        var laterPrice = read("later-price");
+
+        var values = [charge, efficiencyPercent, degradation, margin, capacity, cycles, laterPrice];
+        for (i = 0; i < values.length; i += 1) {
+          if (!isFinite(values[i]) || values[i] < 0) {
+            errorOutput.textContent = "Bitte nur gültige, nicht negative Zahlen eingeben.";
+            return;
+          }
+        }
+        if (efficiencyPercent <= 0 || efficiencyPercent > 100) {
+          errorOutput.textContent = "Der Wirkungsgrad muss größer als 0 und höchstens 100 % sein.";
+          return;
+        }
+
+        errorOutput.textContent = "";
+        var efficiency = efficiencyPercent / 100;
+        var breakEven = charge / efficiency + degradation + margin;
+        var annualInput = capacity * cycles;
+        var annualOutput = annualInput * efficiency;
+        var annualSaving = (annualOutput * (laterPrice - degradation) - annualInput * charge) / 100;
+        var perCycle = cycles > 0 ? annualSaving / cycles : 0;
+
+        breakEvenOutput.textContent = format(breakEven, 2) + " ct/kWh";
+        formulaText.textContent = format(charge, 2) + " ct ÷ " + format(efficiencyPercent, 1) + " % + " + format(degradation, 2) + " ct Verschleiß + " + format(margin, 2) + " ct Vorteil";
+        document.getElementById("annual-input").textContent = format(annualInput, 0) + " kWh";
+        document.getElementById("annual-output").textContent = format(annualOutput, 0) + " kWh";
+        document.getElementById("annual-saving").textContent = format(annualSaving, 2) + " €";
+        document.getElementById("cycle-saving").textContent = format(perCycle, 2) + " €";
+
+        if (charge >= 0 && charge <= 80) slider.value = charge;
+      }
+
+      function applyProfile(name) {
+        var profile = profiles[name];
+        fields.efficiency.value = format(profile.efficiency, 1);
+        fields.degradation.value = format(profile.degradation, 1);
+        fields.margin.value = format(profile.margin, 1);
+        for (var p = 0; p < profileButtons.length; p += 1) {
+          profileButtons[p].className = "profile" + (profileButtons[p].getAttribute("data-profile") === name ? " active" : "");
+        }
+        update();
+      }
+
+      function sliderChanged() {
+        fields["charge-price"].value = format(Number(slider.value), 1);
+        update();
+      }
+
+      slider.addEventListener("input", sliderChanged, false);
+      slider.addEventListener("change", sliderChanged, false);
+      for (i = 0; i < profileButtons.length; i += 1) {
+        profileButtons[i].addEventListener("click", function () { applyProfile(this.getAttribute("data-profile")); }, false);
+      }
+      for (i = 0; i < ids.length; i += 1) {
+        fields[ids[i]].addEventListener("input", update, false);
+        fields[ids[i]].addEventListener("change", update, false);
+      }
+      update();
+    }());
+  </script>
+</body>
+</html>
