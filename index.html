@@ -214,12 +214,12 @@
     .hero-subtitle { display: block; margin-top: 2px; color: var(--hero-muted); font-size: .86rem; }
     .brand-mark { display: grid; width: 42px; height: 42px; flex: 0 0 auto; place-items: center; border-radius: 14px; background: var(--hero-tile); color: var(--accent); box-shadow: var(--hero-tile-shadow); }
     .brand-mark svg { width: 23px; height: 23px; }
-    .energy-flow { position: relative; z-index: 1; display: grid; grid-template-columns: 62px 1fr 76px 1fr 62px; align-items: center; margin: 32px 2px 0; }
-    .flow-node { display: grid; justify-items: center; gap: 8px; color: var(--hero-flow); font-size: .72rem; text-align: center; }
+    .energy-flow { position: relative; z-index: 1; display: grid; grid-template-columns: 62px 1fr 76px 1fr 62px; align-items: start; margin: 32px 2px 0; }
+    .flow-node { display: grid; grid-template-rows: 56px auto; align-items: center; justify-items: center; gap: 8px; color: var(--hero-flow); font-size: .72rem; text-align: center; }
     .flow-icon { display: grid; width: 46px; height: 46px; place-items: center; border-radius: 16px; background: var(--hero-tile); color: var(--hero-icon); box-shadow: var(--hero-tile-shadow); font-size: .82rem; font-weight: 800; }
     .flow-node.storage .flow-icon { width: 56px; height: 56px; border-radius: 19px; background: var(--hero-storage); color: var(--accent); box-shadow: var(--hero-storage-shadow); }
     .flow-node.storage .flow-icon svg { width: 28px; height: 28px; }
-    .flow-link { position: relative; height: 2px; background: linear-gradient(90deg, #f1bd36, #14bfd0); }
+    .flow-link { position: relative; height: 2px; margin-top: 27px; background: linear-gradient(90deg, #f1bd36, #14bfd0); }
     .flow-link::after { content: ""; position: absolute; right: -1px; top: -3px; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #14bfd0; }
 
     .calculator-body { position: relative; z-index: 2; margin-top: -18px; padding: 0 17px 18px; }
@@ -238,7 +238,7 @@
     .result-head { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .result-symbol { display: grid; width: 37px; height: 37px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--accent); color: var(--card); font-size: 1rem; font-weight: 800; }
     .result-label { flex: 1; color: var(--text); font-weight: 650; }
-    output { position: relative; z-index: 1; margin: 10px 0 1px; font-size: clamp(2.45rem, 13vw, 3.65rem); letter-spacing: -.04em; }
+    output { position: relative; z-index: 1; width: 100%; margin: 10px 0 1px; font-size: clamp(2.45rem, 13vw, 3.65rem); letter-spacing: -.04em; white-space: nowrap; }
     .formula { position: relative; z-index: 1; margin-top: 3px; }
     .tech-row { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 17px; }
     .tech-metric { padding: 11px 12px; border-radius: 13px; background: color-mix(in srgb, var(--card) 74%, transparent); }
@@ -523,6 +523,16 @@
 
       function read(id) { return parseGerman(fields[id].value); }
 
+      function fitBreakEvenOutput() {
+        breakEvenOutput.style.fontSize = "";
+        var availableWidth = breakEvenOutput.clientWidth;
+        var requiredWidth = breakEvenOutput.scrollWidth;
+        if (availableWidth > 0 && requiredWidth > availableWidth) {
+          var preferredSize = parseFloat(window.getComputedStyle(breakEvenOutput).fontSize);
+          breakEvenOutput.style.fontSize = (preferredSize * availableWidth / requiredWidth) + "px";
+        }
+      }
+
       function saveConfiguration() {
         try {
           localStorage.setItem("solarbank-configuration", JSON.stringify({
@@ -592,6 +602,7 @@
         var perCycle = cycles > 0 ? annualSaving / cycles : 0;
 
         breakEvenOutput.textContent = format(breakEven, 2) + " ct/kWh";
+        fitBreakEvenOutput();
         formulaText.textContent = format(charge, 2) + " ct ÷ " + format(efficiencyPercent, 1) + " % + " + format(degradation, 2) + " ct Verschleiß + " + format(margin, 2) + " ct Vorteil";
         document.getElementById("efficiency-chip").textContent = format(efficiencyPercent, 0) + " %";
         document.getElementById("cost-chip").textContent = format(degradation + margin, 1) + " ct/kWh";
@@ -630,6 +641,7 @@
       }
       deviceSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
       extensionSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
+      window.addEventListener("resize", fitBreakEvenOutput, false);
       restoreConfiguration();
       applyConfiguration(true);
     }());
