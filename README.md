@@ -126,6 +126,11 @@ Danach ist die App unter `http://localhost:8000` erreichbar. Alternativ kann `in
 .
 ├── index.html             # Vollständige Anwendung
 ├── apple-touch-icon.png   # App- und Browser-Icon
+├── favicon-16x16.png      # Kleines Browser-Icon
+├── favicon-32x32.png      # Browser-Icon
+├── icon-192.png           # Installations-Icon
+├── icon-512.png           # Hochauflösendes Installations-Icon
+├── site.webmanifest       # Metadaten für installierbare Web-Apps
 ├── datenschutz.html       # Hinweise zur Datenverarbeitung
 ├── LICENSE                # MIT-Lizenz
 └── README.md              # Projektdokumentation
