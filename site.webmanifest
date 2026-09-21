@@ -1,6 +1,7 @@
 {
-  "name": "Solarbank AC-Laderechner",
-  "short_name": "Solarbank",
+  "name": "Solarbank Ladeplaner",
+  "short_name": "Ladeplaner",
+  "id": "./",
   "description": "Wirtschaftlichkeitsrechner für die AC-Aufladung einer Solarbank.",
   "lang": "de-DE",
   "start_url": "./",

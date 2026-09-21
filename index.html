@@ -9,19 +9,19 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Solarbank">
+  <meta name="apple-mobile-web-app-title" content="Ladeplaner">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="manifest" href="site.webmanifest">
   <meta name="description" content="Ein einfacher Rechner für die AC-Aufladung der Anker SOLIX Solarbank 3 und 4: Ladepreis einstellen und sofort sehen, ab welchem späteren Strompreis sich das Speichern lohnt.">
-  <meta property="og:title" content="Solarbank AC-Laderechner">
+  <meta property="og:title" content="Solarbank Ladeplaner">
   <meta property="og:description" content="Ladepreis einstellen und sofort erkennen, ob sich das Zwischenspeichern von Netzstrom wirtschaftlich lohnt.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://alxbcr82.github.io/solarbatterie-rechner/">
   <meta property="og:image" content="https://alxbcr82.github.io/solarbatterie-rechner/apple-touch-icon.png">
   <meta name="twitter:card" content="summary">
-  <title>Solarbank – AC-Laderechner</title>
+  <title>Solarbank Ladeplaner</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -198,6 +198,13 @@
     footer { margin: 18px 3px 0; color: var(--muted); font-size: .78rem; }
     footer p { margin: 0 0 8px; }
     footer a { color: var(--accent); }
+    .install-tip { display: flex; align-items: flex-start; gap: 12px; margin: 14px 0 0; padding: 14px 15px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); box-shadow: var(--shadow); }
+    .install-tip[hidden] { display: none; }
+    .install-tip-text { flex: 1; }
+    .install-tip strong { display: block; margin-bottom: 2px; }
+    .install-tip span { display: block; color: var(--muted); font-size: .86rem; }
+    .install-tip button { display: grid; width: 34px; height: 34px; flex: 0 0 auto; place-items: center; border: 0; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 700 1.2rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; cursor: pointer; }
+    .install-tip button:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 2px; }
 
     .app-shell { overflow: hidden; border: 1px solid var(--line); border-radius: 28px; background: var(--card); box-shadow: var(--shadow); }
     .app-hero {
@@ -275,7 +282,7 @@
       <header class="app-hero">
         <div class="hero-top">
           <div>
-            <span class="hero-title">Solarbank Planer</span>
+            <span class="hero-title">Solarbank Ladeplaner</span>
             <span class="hero-subtitle">Günstig laden, später sparen</span>
           </div>
           <span class="brand-mark" aria-hidden="true">
@@ -471,6 +478,14 @@
       </div>
     </div>
 
+    <aside class="install-tip" id="install-tip" aria-labelledby="install-tip-title" hidden>
+      <div class="install-tip-text">
+        <strong id="install-tip-title">Als App installieren</strong>
+        <span>Im Browser auf Seitenmenü bzw. Teilen tippen, „Zum Home-Bildschirm“ wählen und „Als Web-App öffnen“ aktivieren.</span>
+      </div>
+      <button id="dismiss-install-tip" type="button" aria-label="Installationshinweis schließen">×</button>
+    </aside>
+
     <footer>
       <p><strong>Wichtiger Hinweis:</strong> Die Ergebnisse sind unverbindliche Näherungswerte. Es wird keine Gewähr für Richtigkeit, Vollständigkeit oder Aktualität übernommen. Das Tool ersetzt keine Energie-, Finanz- oder Anlageberatung; Nutzung und daraus abgeleitete Entscheidungen erfolgen in eigener Verantwortung.</p>
       <p>Eingaben und Berechnungen bleiben im Browser. Beim Aufruf verarbeitet GitHub Pages technisch erforderliche Verbindungsdaten. <a href="datenschutz.html">Datenschutzhinweise</a> · <a href="https://github.com/AlxBcr82/solarbatterie-rechner">Quellcode und MIT-Lizenz</a></p>
@@ -496,6 +511,8 @@
       var extensionSelect = document.getElementById("extension-configuration");
       var configSummary = document.getElementById("config-summary");
       var storageCapacityOutput = document.getElementById("storage-capacity");
+      var installTip = document.getElementById("install-tip");
+      var dismissInstallTip = document.getElementById("dismiss-install-tip");
       var deviceModels = {
         sb3: { shortLabel: "Solarbank 3", capacity: 2.688 },
         sb4: { shortLabel: "Solarbank 4", capacity: 5.024 }
@@ -522,6 +539,19 @@
       }
 
       function read(id) { return parseGerman(fields[id].value); }
+
+      function initializeInstallTip() {
+        var isIOS = /iPad|iPhone|iPod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        var isStandalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+        var wasDismissed = false;
+        try { wasDismissed = localStorage.getItem("solarbank-install-tip-dismissed") === "1"; } catch (ignore) {}
+        if (isIOS && !isStandalone && !wasDismissed) installTip.hidden = false;
+      }
+
+      function dismissInstallationTip() {
+        installTip.hidden = true;
+        try { localStorage.setItem("solarbank-install-tip-dismissed", "1"); } catch (ignore) {}
+      }
 
       function fitBreakEvenOutput() {
         breakEvenOutput.style.fontSize = "";
@@ -641,10 +671,18 @@
       }
       deviceSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
       extensionSelect.addEventListener("change", function () { applyConfiguration(true); }, false);
+      dismissInstallTip.addEventListener("click", dismissInstallationTip, false);
       window.addEventListener("resize", fitBreakEvenOutput, false);
+      initializeInstallTip();
       restoreConfiguration();
       applyConfiguration(true);
     }());
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./service-worker.js").catch(function () {});
+      });
+    }
   </script>
 </body>
 </html>

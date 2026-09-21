@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="./apple-touch-icon.png" width="128" height="128" alt="Solarbank AC-Laderechner Icon">
+  <img src="./apple-touch-icon.png" width="128" height="128" alt="Solarbank Ladeplaner Icon">
 </p>
 
-<h1 align="center">Solarbank AC-Laderechner</h1>
+<h1 align="center">Solarbank Ladeplaner</h1>
 
 <p align="center">
   Ein kompakter, mobil optimierter Wirtschaftlichkeitsrechner für die AC-Aufladung der Anker SOLIX Solarbank 3 E2700 Pro und Solarbank 4 E5000 Pro.
@@ -106,15 +106,15 @@ Monatliche Grundgebühren gehören nur dann in die Rechnung, wenn sie durch das 
 ## Auf dem iPhone installieren
 
 1. Die [Live-App](https://alxbcr82.github.io/solarbatterie-rechner/) in Safari öffnen.
-2. Das Teilen-Symbol antippen.
+2. Das Seitenmenü beziehungsweise Teilen-Symbol antippen.
 3. **Zum Home-Bildschirm** auswählen.
-4. Den vorgeschlagenen Namen bestätigen.
+4. **Als Web-App öffnen** aktivieren und den vorgeschlagenen Namen bestätigen.
 
-Die App erscheint anschließend mit eigenem Icon auf dem Home-Bildschirm und öffnet sich ohne störende Browsernavigation.
+Die App erscheint anschließend mit eigenem Icon auf dem Home-Bildschirm, öffnet sich ohne störende Browsernavigation und ist nach dem ersten vollständigen Aufruf auch offline verwendbar.
 
 ## Datenschutz
 
-Die Anwendung besteht ausschließlich aus statischem HTML, CSS und JavaScript. Sämtliche Eingaben und Berechnungen verbleiben im Browser. Nur die gewählte Solarbank- und Akkukonfiguration wird dort lokal für den nächsten Aufruf gespeichert. Es gibt keine eigenen Cookies, Formulare, Analyse- oder Trackingdienste. Beim Abruf über GitHub Pages verarbeitet der Hostinganbieter technisch erforderliche Verbindungsdaten. Einzelheiten stehen in den [Datenschutzhinweisen](https://alxbcr82.github.io/solarbatterie-rechner/datenschutz.html).
+Die Anwendung besteht ausschließlich aus statischem HTML, CSS und JavaScript. Sämtliche Eingaben und Berechnungen verbleiben im Browser. Nur die gewählte Solarbank- und Akkukonfiguration wird dort lokal für den nächsten Aufruf gespeichert. Für den Offline-Start werden die öffentlichen App-Dateien im Browser-Cache abgelegt. Es gibt keine eigenen Cookies, Formulare, Analyse- oder Trackingdienste. Beim Abruf über GitHub Pages verarbeitet der Hostinganbieter technisch erforderliche Verbindungsdaten. Einzelheiten stehen in den [Datenschutzhinweisen](https://alxbcr82.github.io/solarbatterie-rechner/datenschutz.html).
 
 ## Technische Umsetzung
 
@@ -123,6 +123,7 @@ Die Anwendung besteht ausschließlich aus statischem HTML, CSS und JavaScript. S
 - Bereitstellung über GitHub Pages
 - Responsive Layout und Unterstützung für iPhone-Safe-Areas
 - Apple-Touch-Icon für den Home-Bildschirm
+- Offline-Nutzung über einen kleinen Service Worker
 
 ### Lokal ausführen
 
@@ -145,6 +146,7 @@ Danach ist die App unter `http://localhost:8000` erreichbar. Alternativ kann `in
 ├── icon-192.png           # Installations-Icon
 ├── icon-512.png           # Hochauflösendes Installations-Icon
 ├── site.webmanifest       # Metadaten für installierbare Web-Apps
+├── service-worker.js      # Offline-Cache und Aktualisierungslogik
 ├── datenschutz.html       # Hinweise zur Datenverarbeitung
 ├── LICENSE                # MIT-Lizenz
 └── README.md              # Projektdokumentation
